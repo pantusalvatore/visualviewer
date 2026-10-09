@@ -224,6 +224,52 @@
   }
 
   /* ------------------------------------------------------------ registrazione video */
+  // Formati video in ordine di preferenza. MP4 (H.264 + AAC) è il più compatibile
+  // con telefoni, social ed editor; WebM resta come alternativa.
+  const REC_FORMATS = [
+    {
+      id: 'mp4',
+      label: 'MP4',
+      types: [
+        'video/mp4;codecs=avc1.640028,mp4a.40.2',
+        'video/mp4;codecs=avc1.4d0028,mp4a.40.2',
+        'video/mp4;codecs=avc1.42E01E,mp4a.40.2',
+        'video/mp4;codecs=avc1,mp4a.40.2',
+        'video/mp4;codecs=avc1',
+      ],
+      // Solo H.264: un semplice 'video/mp4' in Chromium senza codec proprietari
+      // produce VP9 dentro MP4, che molti telefoni e social non aprono.
+      hint: 'Per MP4 usa Chrome, Edge o Safari aggiornati',
+    },
+    { id: 'webm', label: 'WebM', types: ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm'] },
+  ];
+  const canRecord = !!(window.MediaRecorder && canvas.captureStream);
+  const recSel = $('#recFormat');
+  REC_FORMATS.forEach((fmt) => {
+    fmt.mime = canRecord ? fmt.types.find((t) => MediaRecorder.isTypeSupported(t)) || '' : '';
+    const opt = new Option(fmt.mime ? fmt.label : `${fmt.label} (non supportato)`, fmt.id);
+    opt.disabled = !fmt.mime;
+    if (!fmt.mime && fmt.hint) opt.title = fmt.hint;
+    recSel.add(opt);
+  });
+  let savedFormat = null;
+  try {
+    savedFormat = localStorage.getItem('vv.recFormat');
+  } catch (e) {
+    /* storage non disponibile */
+  }
+  const firstOk = REC_FORMATS.find((f) => f.mime);
+  const savedOk = REC_FORMATS.find((f) => f.id === savedFormat && f.mime);
+  recSel.value = (savedOk || firstOk || REC_FORMATS[0]).id;
+  recSel.disabled = !firstOk;
+  recSel.addEventListener('change', () => {
+    try {
+      localStorage.setItem('vv.recFormat', recSel.value);
+    } catch (e) {
+      /* storage non disponibile */
+    }
+  });
+
   let rec = null;
   function toggleRec() {
     if (rec) {
@@ -231,25 +277,26 @@
       return;
     }
     if (!player.buffer) return;
-    if (!window.MediaRecorder || !canvas.captureStream) {
+    const fmt = REC_FORMATS.find((f) => f.id === recSel.value && f.mime) || firstOk;
+    if (!fmt) {
       toast('Registrazione non supportata da questo browser', true);
       return;
     }
-    const types = ['video/webm;codecs=vp9,opus', 'video/webm;codecs=vp8,opus', 'video/webm', 'video/mp4'];
-    const mime = types.find((t) => MediaRecorder.isTypeSupported(t)) || '';
+    const mime = fmt.mime;
     const stream = new MediaStream([
       ...canvas.captureStream(60).getVideoTracks(),
       ...player.streamDestination().stream.getAudioTracks(),
     ]);
-    const r = new MediaRecorder(stream, mime ? { mimeType: mime, videoBitsPerSecond: 12e6 } : {});
+    const r = new MediaRecorder(stream, { mimeType: mime, videoBitsPerSecond: 12e6, audioBitsPerSecond: 256e3 });
     const chunks = [];
     r.ondataavailable = (e) => e.data.size && chunks.push(e.data);
     r.onstop = () => {
       stream.getTracks().forEach((t) => t.kind === 'video' && t.stop());
       rec = null;
       $('#recBtn').classList.remove('on');
+      recSel.disabled = false;
       if (!chunks.length) return;
-      const type = r.mimeType || mime || 'video/webm';
+      const type = r.mimeType || mime;
       const blob = new Blob(chunks, { type });
       const a = document.createElement('a');
       a.href = URL.createObjectURL(blob);
@@ -265,7 +312,8 @@
       player.play();
       syncPlay();
     }
-    toast('Registrazione… premi di nuovo per fermare');
+    recSel.disabled = true;
+    toast(`Registrazione ${fmt.label}… premi di nuovo per fermare`);
   }
   $('#recBtn').addEventListener('click', toggleRec);
 
