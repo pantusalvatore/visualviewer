@@ -35,6 +35,15 @@ Formati: AIFF/AIFF-C (PCM 8/16/24/32 bit, `sowt`, float, µ-law/A-law) sono deco
 
 Lo slider **Sensibilità** regola sia l'intensità del visual sia la soglia del rilevamento dei beat.
 
+## Registrare un video
+
+Premi ● (o `R`) per registrare quello che vedi insieme all'audio; premi di nuovo per fermare e il file si scarica da solo. Il menu accanto al pulsante sceglie il formato:
+
+- **MP4** (H.264 + AAC): si apre ovunque, va bene per Instagram, TikTok, YouTube e i programmi di montaggio. Disponibile in Chrome, Edge e Safari recenti.
+- **WebM** (VP9 + Opus): alternativa leggera, disponibile in Chrome, Edge e Firefox.
+
+Se il browser non supporta un formato, la voce appare come "non supportato". La registrazione parte dal punto in cui si trova il brano: per avere il pezzo intero, riportalo all'inizio prima di premere ●.
+
 ## Scorciatoie
 
 | Tasto | Azione |
@@ -45,7 +54,7 @@ Lo slider **Sensibilità** regola sia l'intensità del visual sia la soglia del 
 | `P` | Palette successiva |
 | `H` | Mostra/nascondi il pannello di analisi |
 | `F` | Schermo intero |
-| `R` | Registra un video (.webm) con l'audio |
+| `R` | Registra un video con l'audio (MP4 o WebM, scelto dal menu accanto al pulsante ●) |
 | `O` | Apri un altro brano |
 | `←` / `→` | Indietro / avanti di 5 s |
 

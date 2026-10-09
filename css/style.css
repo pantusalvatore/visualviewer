@@ -277,6 +277,8 @@ button, select, .icon { font: inherit; color: inherit; }
 #playBtn.playing .i-play { display: none; }
 #playBtn.playing .i-pause { display: block; }
 
+.rec-format { padding: 6px 24px 6px 10px; background-position: right 8px center; font-size: 12px; }
+select:disabled { opacity: 0.5; cursor: default; }
 #recBtn svg { fill: var(--rec); }
 #recBtn.on { background: rgba(255, 77, 109, 0.2); animation: pulse 1.2s ease-in-out infinite; }
 
