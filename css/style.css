@@ -102,6 +102,11 @@ h1 span {
 
 .sub { color: var(--muted); line-height: 1.55; margin: 0 0 28px; }
 .sub b { color: var(--fg); font-weight: 500; }
+.when-touch { display: none; }
+@media (hover: none) and (pointer: coarse) {
+  .when-touch { display: inline; }
+  .when-mouse { display: none; }
+}
 .hint { color: var(--muted); font-size: 13px; margin: 22px 0 0; opacity: 0.8; }
 
 .btn {
@@ -123,6 +128,9 @@ h1 span {
   box-shadow: 0 8px 30px rgba(155, 93, 229, 0.45);
 }
 
+.btn.install { display: flex; margin: 18px auto 0; background: rgba(255, 255, 255, 0.06); }
+.btn.install[hidden], .install-hint[hidden] { display: none; }
+.install-hint b { color: var(--fg); font-weight: 500; }
 .btn:hover { transform: translateY(-1px); box-shadow: 0 10px 36px rgba(155, 93, 229, 0.6); }
 .btn:focus-within { outline: 2px solid var(--accent-2); outline-offset: 3px; }
 
@@ -172,7 +180,7 @@ body.dragging #dropOverlay { opacity: 1; }
 
 #toast {
   position: fixed;
-  top: 18px;
+  top: max(18px, env(safe-area-inset-top));
   left: 50%;
   transform: translate(-50%, -12px);
   padding: 9px 18px;
@@ -196,8 +204,8 @@ body.dragging #dropOverlay { opacity: 1; }
 /* HUD analisi */
 #hud {
   position: fixed;
-  top: 16px;
-  left: 16px;
+  top: max(16px, env(safe-area-inset-top));
+  left: max(16px, env(safe-area-inset-left));
   width: 230px;
   padding: 14px 16px;
   border-radius: var(--radius);
@@ -266,6 +274,7 @@ button, select, .icon { font: inherit; color: inherit; }
   transition: background 0.15s ease;
 }
 
+.icon[hidden] { display: none; }
 .icon:hover { background: rgba(255, 255, 255, 0.08); }
 .icon:focus-visible, .chip:focus-visible, select:focus-visible { outline: 2px solid var(--accent-2); outline-offset: 1px; }
 .icon svg { width: 20px; height: 20px; fill: currentColor; }

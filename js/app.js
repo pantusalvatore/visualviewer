@@ -347,9 +347,51 @@
     requestAnimationFrame(frame);
   }
 
+  /* ------------------------------------------------------------ app installabile */
+  // Su iPhone il Web Audio segue il tasto silenzioso: così suona anche in modalità silenziosa.
+  if (navigator.audioSession) navigator.audioSession.type = 'playback';
+
+  if ('serviceWorker' in navigator && location.protocol.startsWith('http')) {
+    window.addEventListener('load', () => navigator.serviceWorker.register('sw.js').catch(() => {}));
+  }
+
+  // File aperti con "Apri con…" quando l'app è installata (Chrome/Edge desktop).
+  if ('launchQueue' in window) {
+    window.launchQueue.setConsumer(async (params) => {
+      if (params.files && params.files.length) loadFile(await params.files[0].getFile());
+    });
+  }
+
+  const standalone = matchMedia('(display-mode: standalone), (display-mode: fullscreen)').matches || navigator.standalone;
+  const installBtn = $('#installBtn');
+  let installPrompt = null;
+  window.addEventListener('beforeinstallprompt', (e) => {
+    e.preventDefault();
+    installPrompt = e;
+    installBtn.hidden = false;
+  });
+  installBtn.addEventListener('click', async () => {
+    if (!installPrompt) return;
+    installPrompt.prompt();
+    await installPrompt.userChoice;
+    installPrompt = null;
+    installBtn.hidden = true;
+  });
+  window.addEventListener('appinstalled', () => {
+    installBtn.hidden = true;
+    toast('App installata');
+  });
+  const isIos = /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  if (isIos && !standalone && location.protocol.startsWith('http')) $('#iosHint').hidden = false;
+
+  // Dove lo schermo intero non esiste (iPhone) il pulsante non serve.
+  if (!document.fullscreenEnabled) $('#fsBtn').hidden = true;
+
   window.addEventListener('resize', resize);
   setPalette(0);
   setScene(0, false);
+  // Su schermi stretti il pannello di analisi coprirebbe il visual: parte chiuso.
+  if (window.innerWidth < 640) hud.hidden = true;
   hudBtn.classList.toggle('on', !hud.hidden);
   resize();
   requestAnimationFrame(frame);

@@ -5,6 +5,14 @@
   <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
   <title>Visual Viewer</title>
   <meta name="description" content="Visualizzatore audio reattivo per brani AIF e MP3">
+  <meta name="theme-color" content="#04060d">
+  <meta name="mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-capable" content="yes">
+  <meta name="apple-mobile-web-app-status-bar-style" content="black-translucent">
+  <meta name="apple-mobile-web-app-title" content="Visual">
+  <link rel="manifest" href="manifest.webmanifest">
+  <link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+  <link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@300;400;500;600&display=swap" rel="stylesheet">
@@ -18,12 +26,14 @@
   <section id="landing">
     <div class="card">
       <h1>visual<span>viewer</span></h1>
-      <p class="sub">Trascina qui un brano <b>.aif</b> / <b>.aiff</b> o <b>.mp3</b>:<br>frequenze, ritmo e timbro diventano luce in tempo reale.</p>
+      <p class="sub"><span class="when-mouse">Trascina qui</span><span class="when-touch">Scegli</span> un brano <b>.aif</b> / <b>.aiff</b> o <b>.mp3</b>:<br>frequenze, ritmo e timbro diventano luce in tempo reale.</p>
       <label class="btn primary">
         Scegli un file
         <input type="file" id="file" accept=".aif,.aiff,.aifc,.mp3,.wav,.flac,.ogg,.m4a,audio/*" hidden>
       </label>
-      <p class="hint">Il file resta sul tuo computer: nessun upload.</p>
+      <p class="hint">Il file resta sul tuo dispositivo: nessun upload.</p>
+      <button id="installBtn" class="btn install" hidden>Installa l'app</button>
+      <p class="hint install-hint" id="iosHint" hidden>Per installarla su iPhone: tocca <b>Condividi</b> e poi <b>Aggiungi alla schermata Home</b>.</p>
     </div>
   </section>
 

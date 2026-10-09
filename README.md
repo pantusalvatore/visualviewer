@@ -14,6 +14,20 @@ Trascina un file sulla pagina o premi **Scegli un file**. Il file non lascia mai
 
 Formati: AIFF/AIFF-C (PCM 8/16/24/32 bit, `sowt`, float, µ-law/A-law) sono decodificati da un parser JavaScript incluso, così funzionano anche in Chrome e Firefox, che non leggono gli AIFF da soli. MP3, WAV, FLAC, OGG e M4A passano dal decoder del browser.
 
+## Installarla sul telefono
+
+Visual Viewer è una web app installabile (PWA): una volta pubblicata online ha un'icona propria, si apre a schermo intero e funziona anche senza connessione.
+
+1. Pubblica il sito con GitHub Pages: **Settings → Pages → Deploy from a branch**, branch `main`, cartella `/ (root)`. Dopo un minuto è online su `https://<utente>.github.io/visualviewer/`.
+2. Apri quell'indirizzo dal telefono:
+   - **iPhone / iPad (Safari)**: tasto Condividi → **Aggiungi alla schermata Home**.
+   - **Android (Chrome)**: tocca **Installa l'app** nella pagina iniziale, oppure menu ⋮ → **Installa app**.
+3. Su computer (Chrome/Edge) compare l'icona di installazione nella barra degli indirizzi; da installata puoi aprire i file audio con "Apri con → Visual Viewer".
+
+I brani si scelgono dall'app File (iPhone) o dal gestore file (Android). Su iPhone l'audio suona anche con il tasto silenzioso attivo.
+
+Quando modifichi i file dell'app, aumenta `VERSION` in `sw.js`: così i telefoni scaricano la versione nuova invece di quella salvata.
+
 ## Scene
 
 | Scena | Cosa fa |
@@ -59,6 +73,7 @@ js/player.js    riproduzione con Web Audio
 js/features.js  analisi audio in tempo reale
 js/scenes.js    palette e scene (Canvas 2D)
 js/app.js       interfaccia e loop di rendering
+manifest.webmanifest, sw.js, icons/   app installabile e offline
 ```
 
 Per aggiungere una scena, crea un oggetto con `enter(s)` e `draw(g, f, s)` in `js/scenes.js` e aggiungilo a `VV.SCENES`.
