@@ -64,7 +64,7 @@ export function NotesEditor({ id, initial }: { id: string; initial: string }) {
           {pending ? "Salvataggio…" : "Salva note"}
         </Button>
         <span className="text-sm text-muted" aria-live="polite">
-          {!dirty && saved && !pending ? "Note salvate" : ""}
+          {!dirty && saved && !pending ? "Note salvate" : null}
         </span>
       </div>
     </div>

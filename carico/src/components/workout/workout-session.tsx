@@ -46,6 +46,11 @@ interface WState {
   rest: { endAt: number; total: number } | null;
 }
 
+/** Orario di fine del recupero (fuori dal componente: viene chiamato solo dagli handler). */
+function restEndsAt(seconds: number): number {
+  return Date.now() + seconds * 1000;
+}
+
 const dateFmt = new Intl.DateTimeFormat("it-IT", { day: "numeric", month: "short" });
 
 function initialSets(item: WorkoutItemInput, unit: WeightUnit): WSet[] {
@@ -197,7 +202,7 @@ function WorkoutSessionInner({
       return list.some((x, j) => !x.done && !(i === state.current && j === setIndex));
     });
     if (item.restSeconds > 0 && (remaining > 0 || groupHasSetsLeft || state.current < items.length - 1)) {
-      setRest(Date.now() + item.restSeconds * 1000, item.restSeconds);
+      setRest(restEndsAt(item.restSeconds), item.restSeconds);
     }
     if (target !== state.current && groupHasSetsLeft) setTimeout(() => goTo(target), 350);
     else if (remaining === 0 && state.current < items.length - 1) setTimeout(() => goTo(state.current + 1), 600);
@@ -287,7 +292,10 @@ function WorkoutSessionInner({
             {formatDuration(now - new Date(state.startedAt).getTime())} · {doneCount}/{totalCount} serie
           </p>
         </div>
-        <Button variant="primary" onClick={() => setFinishing(true)} disabled={doneCount === 0}>
+        <Button variant="primary" onClick={() => {
+            setNow(Date.now());
+            setFinishing(true);
+          }} disabled={doneCount === 0}>
           Termina
         </Button>
       </div>
@@ -449,7 +457,10 @@ function WorkoutSessionInner({
                 Successivo <Icon name="chevron" size={20} />
               </Button>
             ) : (
-              <Button size="lg" variant="primary" icon="check" className="flex-1" disabled={doneCount === 0} onClick={() => setFinishing(true)}>
+              <Button size="lg" variant="primary" icon="check" className="flex-1" disabled={doneCount === 0} onClick={() => {
+                setNow(Date.now());
+                setFinishing(true);
+              }}>
                 Termina
               </Button>
             )}
@@ -475,7 +486,7 @@ function WorkoutSessionInner({
               Termina allenamento
             </h2>
             <p className="mt-1 text-muted">
-              {doneCount} serie completate su {totalCount} · {formatDuration(Date.now() - new Date(state.startedAt).getTime())}
+              {doneCount} serie completate su {totalCount} · {formatDuration(now - new Date(state.startedAt).getTime())}
             </p>
             <label htmlFor="note-allenamento" className="mt-4 mb-1.5 block text-sm font-semibold">
               Note (facoltative)

@@ -88,8 +88,11 @@ export default async function PlanPage({ params }: Props) {
                           </dd>
                           <dt className="sr-only">Carico</dt>
                           <dd className="col-span-2 text-muted tabular-nums">
-                            {item.load ? <Weight kg={item.load} /> : null}
-                            {item.load ? " · " : ""}
+                            {item.load ? (
+                              <>
+                                <Weight kg={item.load} /> ·{" "}
+                              </>
+                            ) : null}
                             {formatRest(item.restSeconds)}
                           </dd>
                         </dl>

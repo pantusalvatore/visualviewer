@@ -54,10 +54,11 @@ export function fromBuilderState(state: BuilderState, unit: WeightUnit): PlanDra
     notes: state.notes,
     days: state.days.map((d) => ({
       name: d.name,
-      items: d.items.map(({ uid: _uid, loadText, ...rest }) => ({
-        ...rest,
-        load: parseWeightInput(loadText, unit),
-      })),
+      items: d.items.map((item) => {
+        const { loadText, ...rest } = item;
+        delete (rest as Partial<BuilderItem>).uid;
+        return { ...rest, load: parseWeightInput(loadText, unit) };
+      }),
     })),
   };
 }

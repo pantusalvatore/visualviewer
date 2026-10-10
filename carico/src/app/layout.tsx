@@ -1,5 +1,6 @@
 import type { Metadata, Viewport } from "next";
-import { SettingsProvider, themeInitScript } from "@/components/settings";
+import { SettingsProvider } from "@/components/settings";
+import { themeInitScript } from "@/lib/settings-keys";
 import { ServiceWorkerRegister } from "@/components/sw-register";
 import "./globals.css";
 

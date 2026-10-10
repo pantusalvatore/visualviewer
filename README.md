@@ -1,5 +1,7 @@
 # visualviewer
 
+> Questo repository contiene anche **[Carico](carico/README.md)**, una web app per creare ed eseguire schede di allenamento (cartella `carico/`).
+
 Visualizzatore audio reattivo che gira nel browser. Carichi un brano **.aif / .aiff** o **.mp3** e lo schermo si colora e disegna in tempo reale seguendo frequenze, ritmo e timbro.
 
 ## Uso

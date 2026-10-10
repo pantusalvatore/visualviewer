@@ -199,7 +199,12 @@ export function ExerciseCard({ exercise: e }: { exercise: ExerciseSummary }) {
         <h3 className="leading-snug font-bold">{e.name}</h3>
         <p className="mt-auto flex items-center gap-1.5 pt-1 text-xs text-muted">
           {EQUIPMENT_LABELS[e.equipment]} · {LEVEL_LABELS[e.level]}
-          {e.favorite && <Icon name="star" size={14} filled className="ml-auto text-accent" aria-label="Preferito" />}
+          {e.favorite && (
+            <span className="ml-auto text-accent">
+              <Icon name="star" size={14} filled />
+              <span className="sr-only">Preferito</span>
+            </span>
+          )}
           {e.isCustom && <Badge className="ml-auto">Mio</Badge>}
         </p>
       </div>

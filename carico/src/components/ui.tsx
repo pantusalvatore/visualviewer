@@ -6,7 +6,7 @@ export function cx(...classes: (string | false | null | undefined)[]): string {
   return classes.filter(Boolean).join(" ");
 }
 
-type Variant = "primary" | "secondary" | "ghost" | "danger";
+type Variant = "primary" | "secondary" | "ghost" | "danger" | "inverse";
 type Size = "md" | "lg" | "sm";
 
 const VARIANTS: Record<Variant, string> = {
@@ -14,6 +14,8 @@ const VARIANTS: Record<Variant, string> = {
   secondary: "bg-surface text-ink border border-line hover:bg-surface-2",
   ghost: "text-ink hover:bg-surface-2",
   danger: "bg-danger-soft text-danger hover:brightness-95",
+  /** Per superfici scure (card "inchiostro"). */
+  inverse: "border border-bg/25 text-bg hover:bg-bg/10",
 };
 const SIZES: Record<Size, string> = {
   sm: "h-9 px-3 text-sm gap-1.5 rounded-lg",
