@@ -1,0 +1,128 @@
+// Schema del database locale (SQLite).
+// Le liste (muscoli secondari, passi, immagini...) sono salvate come JSON in
+// colonne di testo, perché SQLite non supporta i tipi array.
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Exercise {
+  id               String   @id @default(cuid())
+  slug             String   @unique
+  name             String
+  nameEn           String?
+  primaryMuscle    String
+  secondaryMuscles String   @default("[]") // string[]
+  equipment        String
+  level            String
+  type             String
+  /// { partenza: string[], esecuzione: string[], finale: string[], respirazione: string[] }
+  instructions     String   @default("{}")
+  mistakes         String   @default("[]") // string[]
+  safety           String   @default("[]") // string[]
+  easier           String   @default("[]") // string[] (slug o testo libero)
+  harder           String   @default("[]") // string[] (slug o testo libero)
+  images           String   @default("[]") // string[] di URL
+  imageCredit      String?
+  isCustom         Boolean  @default(false)
+  favorite         Boolean  @default(false)
+  notes            String?
+  createdAt        DateTime @default(now())
+  updatedAt        DateTime @updatedAt
+
+  planItems   PlanItem[]
+  workoutSets WorkoutSet[]
+
+  @@index([primaryMuscle])
+  @@index([equipment])
+}
+
+/// Immagini caricate dall'utente (foto per esercizi personalizzati).
+model Media {
+  id        String   @id @default(cuid())
+  mime      String
+  data      Bytes
+  createdAt DateTime @default(now())
+}
+
+model Plan {
+  id          String   @id @default(cuid())
+  name        String
+  goal        String
+  level       String
+  daysPerWeek Int
+  notes       String?
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+
+  days     PlanDay[]
+  sessions WorkoutSession[]
+}
+
+model PlanDay {
+  id     String     @id @default(cuid())
+  planId String
+  plan   Plan       @relation(fields: [planId], references: [id], onDelete: Cascade)
+  name   String
+  order  Int
+  items  PlanItem[]
+
+  @@index([planId])
+}
+
+model PlanItem {
+  id           String   @id @default(cuid())
+  dayId        String
+  day          PlanDay  @relation(fields: [dayId], references: [id], onDelete: Cascade)
+  exerciseId   String
+  exercise     Exercise @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  order        Int
+  sets         Int
+  repsMin      Int
+  repsMax      Int
+  /// Carico indicativo in kg (sempre kg nel DB, convertito in lb a video).
+  load         Float?
+  restSeconds  Int
+  tempo        String?
+  notes        String?
+  /// Esercizi consecutivi con la stessa lettera formano un superset.
+  superset     String?
+
+  @@index([dayId])
+}
+
+model WorkoutSession {
+  id         String    @id @default(cuid())
+  planId     String?
+  plan       Plan?     @relation(fields: [planId], references: [id], onDelete: SetNull)
+  dayId      String?
+  planName   String
+  dayName    String
+  startedAt  DateTime
+  finishedAt DateTime?
+  notes      String?
+  sets       WorkoutSet[]
+
+  @@index([startedAt])
+}
+
+model WorkoutSet {
+  id         String         @id @default(cuid())
+  sessionId  String
+  session    WorkoutSession @relation(fields: [sessionId], references: [id], onDelete: Cascade)
+  exerciseId String
+  exercise   Exercise       @relation(fields: [exerciseId], references: [id], onDelete: Cascade)
+  position   Int
+  setNumber  Int
+  weight     Float          // kg
+  reps       Int
+  completed  Boolean        @default(true)
+
+  @@index([exerciseId])
+  @@index([sessionId])
+}
