@@ -8,6 +8,8 @@ export type ThemePref = "system" | "light" | "dark";
 interface Settings {
   theme: ThemePref;
   unit: WeightUnit;
+  /** true dopo aver letto le preferenze dal dispositivo. */
+  ready: boolean;
   setTheme: (t: ThemePref) => void;
   setUnit: (u: WeightUnit) => void;
 }
@@ -36,12 +38,14 @@ export function applyTheme(pref: ThemePref) {
 export function SettingsProvider({ children }: { children: ReactNode }) {
   const [theme, setThemeState] = useState<ThemePref>("system");
   const [unit, setUnitState] = useState<WeightUnit>("kg");
+  const [ready, setReady] = useState(false);
 
   useEffect(() => {
     // Lettura iniziale da localStorage (non disponibile durante il rendering lato server).
     // eslint-disable-next-line react-hooks/set-state-in-effect
     setThemeState(readStorage(THEME_KEY, ["system", "light", "dark"] as const, "system"));
     setUnitState(readStorage(UNIT_KEY, ["kg", "lb"] as const, "kg"));
+    setReady(true);
   }, []);
 
   useEffect(() => {
@@ -66,7 +70,7 @@ export function SettingsProvider({ children }: { children: ReactNode }) {
     } catch {}
   }, []);
 
-  const value = useMemo(() => ({ theme, unit, setTheme, setUnit }), [theme, unit, setTheme, setUnit]);
+  const value = useMemo(() => ({ theme, unit, ready, setTheme, setUnit }), [theme, unit, ready, setTheme, setUnit]);
   return <SettingsContext.Provider value={value}>{children}</SettingsContext.Provider>;
 }
 
